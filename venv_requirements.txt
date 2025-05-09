@@ -1,0 +1,22 @@
+# Core Deep Learning Framework
+torch
+
+# High-level Training Framework
+pytorch-lightning
+
+# Configuration Management
+omegaconf
+
+# Experiment Tracking & Sweeps
+wandb
+
+# Numerical Operations
+numpy
+
+# Tensor Manipulation Utilities
+einops
+
+# Plotting
+matplotlib
+
+imageio[ffmpeg]
