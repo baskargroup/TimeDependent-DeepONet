@@ -2,7 +2,6 @@
 
 This repository provides the source code and training scripts for **"Geometric Deep Operator Networks for Time-Dependent Prediction of Flows Over Varying Geometries"** The project evaluates the deep operator network **DeepONet** for predicting tranisent flow around complex geometries.
 
-
 ## Paper
 Our study introduces a benchmark for scientific machine learning (SciML) models in predicting tranisnet flow over intricate geometries using high-fidelity simulation data. The full paper can be accessed here:
 
@@ -45,7 +44,7 @@ pip install -r venv_requirements.txt
 ## Model Training
 To train the model, run the following command:
 ```bash
-python3 main.py --config_path "path to conf.yaml" 
+python3 main.py --config_path "path to conf.yaml"
 ```
 
 Before training, you need to specify the dataset paths in the **configurations** (YAML files):
@@ -57,13 +56,11 @@ data:
   file_path_test_y: ./data/test_y.npz
 ```
 
-
 ## Postprocessing
 After training, evaluate erros and visualize results (for single_step and rollout) with:
 ```bash
-python3 postprocess.py --checkpoint_path path/to/checkpoints/ --config_path path/to/conf.yaml --sample_ids        0,2,5
+python3 postprocess.py --checkpoint_path path/to/checkpoints/ --config_path path/to/conf.yaml --sample_ids "0,2,5"
 ```
-
 
 ## Contributing
 We welcome contributions! Please fork the repository and submit a pull request.

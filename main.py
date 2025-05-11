@@ -8,6 +8,8 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from omegaconf import OmegaConf
 import wandb
+from pytorch_lightning.loggers import WandbLogger
+import time
 from data.dataset import LidDrivenDataset2DTime
 from models.geometric_deeponet.geometric_deeponet import GeometricDeepONetTime
 
@@ -67,7 +69,7 @@ def main(config_path: str, config_obj=None):
     val_loader = DataLoader(
         val_ds,
         batch_size=cfg.data.batch_size,
-        shuffle=False,
+        shuffle=True,
         num_workers=num_workers,
         pin_memory=torch.cuda.is_available()
     )
@@ -84,6 +86,7 @@ def main(config_path: str, config_obj=None):
         ModelCheckpoint(
             monitor=ck.monitor,
             dirpath=ck_dir,
+            filename=ck.filename,
             save_top_k=ck.save_top_k,
             mode=ck.mode
         )
@@ -98,6 +101,15 @@ def main(config_path: str, config_obj=None):
             )
         )
 
+    wandb_logger = WandbLogger(
+        project=cfg.wandb.project,        
+        name=cfg.wandb.name,              
+        config=OmegaConf.to_container(cfg, resolve=True)
+    )
+
+    artifact = wandb.Artifact('run-config', type='config')
+    artifact.add_file(config_path)              # path to your conf.yaml
+    wandb_logger.experiment.log_artifact(artifact)
     # Trainer
     trainer = pl.Trainer(
         accelerator=cfg.trainer.accelerator,
@@ -105,10 +117,13 @@ def main(config_path: str, config_obj=None):
         max_epochs=cfg.trainer.max_epochs,
         precision=cfg.trainer.precision,
         callbacks=cb,
+        logger=wandb_logger,  
         log_every_n_steps=cfg.trainer.log_every_n_steps
     )
+    start_time = time.time()
     trainer.fit(model, train_loader, val_loader)
-
+    total_seconds = time.time() - start_time
+    wandb_logger.experiment.log({"total_runtime_sec": total_seconds})
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

@@ -1,6 +1,7 @@
 callbacks:
   checkpoint:
-    dirpath: ${CHKPT_DIR} 
+    dirpath: ${CHKPT_DIR}
+    filename: ${CHKPT_NAME}
     mode: min                
     monitor: val_loss        
     save_top_k: 1            
@@ -10,7 +11,7 @@ callbacks:
     mode: min                
 
 data:
-  batch_size: 16
+  batch_size: 32
   file_path_test_x: ${DATA_DIR}/fpo_test_x.npy
   file_path_test_y: ${DATA_DIR}/fpo_test_y.npy
   file_path_train_x: ${DATA_DIR}/fpo_train_x.npy
@@ -45,6 +46,10 @@ model:
   lr: 0.0001               
   plot_path: ${PLOT_DIR} 
 
+wandb:
+  project: "TD-geodeponet"
+  name:   "16in_stride8"
+    
 sweep_parameters:
   parameters:
     trainer.seed:
@@ -54,6 +59,6 @@ trainer:
   accelerator: gpu        
   devices: 1              
   log_every_n_steps: 10   
-  max_epochs: 600
+  max_epochs: 1000
   seed: 0
   precision: 16-mixed      # Options: "16-mixed", "bf16-mixed", "32-true", "64-true"
