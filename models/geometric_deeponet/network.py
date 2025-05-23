@@ -124,7 +124,6 @@ class GeoDeepONetTime(nn.Module):
         # --- Branch ---
         feat = self.cnn_encoder(x1)
         glob = self.branch_stage_1(feat)
-
         # --- Trunk ---
         # coords: [b, 2, h, w] → [b, h*w, 2]
         c2 = rearrange(coords, 'b c h w -> b (h w) c')
@@ -135,8 +134,7 @@ class GeoDeepONetTime(nn.Module):
         # pass each point through the trunk MLP → [b, h*w, modes]
         local = self.trunk_stage_1(trunk_in)
 
-        # --- Merge & Stage2 ---
-        # glob: [b, modes] → [b, 1, modes], local: [b, h*w, modes]
+        # --- Merge & Stage2 --- [b, modes] → [b, 1, modes], local: [b, h*w, modes]
         merged = glob.unsqueeze(1) * local
         avg = merged.mean(dim=1)
 

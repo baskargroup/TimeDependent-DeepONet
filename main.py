@@ -29,7 +29,7 @@ def load_config(path):
 
 
 def main(config_path: str, config_obj=None):
-    # Load or override config
+
     if config_obj is not None:
         cfg = config_obj
     else:
@@ -37,7 +37,6 @@ def main(config_path: str, config_obj=None):
 
     set_seed(cfg.trainer.seed)
 
-    # Dataset split (80/20)
     ds = LidDrivenDataset2DTime(
         cfg.data.file_path_train_x,
         cfg.data.file_path_train_y,
@@ -46,10 +45,10 @@ def main(config_path: str, config_obj=None):
         cfg.data.every_nth_timestep,
         cfg.model.height,
         cfg.model.width,
-        cfg.data.type,
-        cfg.model.includePressure,
-        cfg.model.output_channels
-    )
+        cfg.model.output_channels,
+        cfg.model.domain_length_x,
+        cfg.model.domain_length_y)
+    
     n = len(ds)
     train_n = int(0.8 * n)
     train_ds, val_ds = random_split(
@@ -69,7 +68,7 @@ def main(config_path: str, config_obj=None):
     val_loader = DataLoader(
         val_ds,
         batch_size=cfg.data.batch_size,
-        shuffle=True,
+        shuffle=cfg.data.shuffle,
         num_workers=num_workers,
         pin_memory=torch.cuda.is_available()
     )

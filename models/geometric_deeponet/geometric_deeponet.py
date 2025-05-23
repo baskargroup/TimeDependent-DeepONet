@@ -1,20 +1,23 @@
 import torch
 from models.base import BaseLightningModule
 from models.geometric_deeponet.network import GeoDeepONetTime as _GeoDeepONetTime
+from models.deriv_calc import DerivativeCalculator
 
 class GeometricDeepONetTime(BaseLightningModule):
     def __init__(self, **kwargs):
         super().__init__()
-        # save all hyperparameters (including height, width, lr, etc.)
         self.save_hyperparameters()
-
-        # compute effective channels
-        eff = (
-            self.hparams.output_channels
-            if self.hparams.includePressure
-            else self.hparams.output_channels - 1
+        eff = self.hparams.output_channels - 1
+        
+        self.deriv_calc = DerivativeCalculator(
+            height=self.hparams.height,
+            width=self.hparams.width,
+            domain_length_x=self.hparams.domain_length_x,
+            domain_length_y=self.hparams.domain_length_y,
+            device=torch.device('cpu'),
+            channels=eff
         )
-
+        
         # build network args
         net_args = {k: getattr(self.hparams, k) for k in [
             'height', 'width', 'num_input_timesteps', 'input_channels_loc',

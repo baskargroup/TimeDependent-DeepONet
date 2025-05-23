@@ -17,16 +17,16 @@ data:
   file_path_train_x: ${DATA_DIR}/fpo_train_x.npy
   file_path_train_y: ${DATA_DIR}/fpo_train_y.npy
   shuffle: true              
-  type: collocation          
   every_nth_timestep: 8      # Use starting timesteps 0, n, 2n, ... for generating training/eval samples. 1 means use all possible.
 
 model:
-  includePressure: false
+  use_derivative_loss: false
+  use_zero_bc: false 
   height: 256              
   width: 1024              
   domain_length_x: 16.0    
   domain_length_y: 4.0     
-  num_input_timesteps: 16  # Nb: Length of the input sequence (using ground truth)
+  num_input_timesteps: 16  # Length of the input sequence 
   final_timestep: 60       
   # --- Network Architecture ---
   input_channels_loc: 2    # Base location channels (x, y) - SDF is added internally
@@ -59,6 +59,6 @@ trainer:
   accelerator: gpu        
   devices: 1              
   log_every_n_steps: 10   
-  max_epochs: 1000
+  max_epochs: 200
   seed: 0
   precision: 16-mixed      # Options: "16-mixed", "bf16-mixed", "32-true", "64-true"
