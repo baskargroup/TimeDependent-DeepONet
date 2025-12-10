@@ -65,5 +65,27 @@ python3 postprocess.py --checkpoint_path path/to/checkpoints/ --config_path path
 ## Contributing
 We welcome contributions! Please fork the repository and submit a pull request.
 
+## Pretrained checkpoints
+
+We release pre-trained time-dependent DeepONet checkpoints for the FlowBench FPO dataset on the Hugging Face Hub: https://huggingface.co/arabeh/DeepONet-FlowBench-FPO
+
+You can download a checkpoint and load it with the code in this repository.
+
+```python
+from huggingface_hub import hf_hub_download
+import torch
+
+from models.geometric_deeponet.geometric_deeponet import GeometricDeepONetTime
+
+REPO_ID = "arabeh/DeepONet-FlowBench-FPO"
+filename = "checkpoints/time-dependent-deeponet_4in.ckpt"  # choose 1in/4in/8in/16in
+
+ckpt_path = hf_hub_download(REPO_ID, filename)
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = GeometricDeepONetTime.load_from_checkpoint(ckpt_path, map_location=device)
+model = model.eval().to(device)
+```
+
 ## License
 This repository is licensed under the MIT License.
